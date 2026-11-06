@@ -20,3 +20,11 @@
 * `src/` — папка с базовым скриптом-заглушкой `main.py`.
 * `requirements.txt` — список необходимых Python-библиотек для запуска.
 
+## Команда проекта
+* omozarto (Создатель репозитория)
+* maraZZZ
+* chuonni
+* aa_t
+* svetlana28
+* Radamirchikz
+* VladislavZ
