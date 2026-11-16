@@ -24,23 +24,30 @@ preprocessor = ColumnTransformer(
         ('cat', OneHotEncoder(handle_unknown='ignore'), cat_features)
     ])
 
-# 3. Разбиение
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+# 3. Разбиение 60:20:20 со стратификацией
+X_temp, X_test, y_temp, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+X_train, X_val, y_train, y_val = train_test_split(X_temp, y_temp, test_size=0.25, random_state=42, stratify=y_temp)
 
-# 4. Обучение (моя модель - Логистическая регрессия)
-pipeline = Pipeline(steps=[
+# 4. Модель Дарьи: Logistic Regression
+pipeline = Pipeline([
     ('preprocessor', preprocessor),
     ('classifier', LogisticRegression(class_weight='balanced', max_iter=1000, random_state=42))
 ])
+
+# Обучение на train
 pipeline.fit(X_train, y_train)
 
-# 5. Предсказание
-y_pred = pipeline.predict(X_test)
+# 5. Оценка на валидации
+y_val_pred = pipeline.predict(X_val)
+print("=== ДАРЬЯ: Logistic Regression (Validation) ===")
+print(f"Recall: {recall_score(y_val, y_val_pred):.4f}")
+print(f"Precision: {precision_score(y_val, y_val_pred):.4f}")
+print(f"F1-score: {f1_score(y_val, y_val_pred):.4f}")
 
-# 6. Метрики
-print("=== МОДЕЛЬ ДАРЬИ: Logistic Regression ===")
-print(f"Recall: {recall_score(y_test, y_pred):.4f}")
-print(f"Precision: {precision_score(y_test, y_pred):.4f}")
-print(f"F1-score: {f1_score(y_test, y_pred):.4f}")
-print("\nПолный отчет:")
-print(classification_report(y_test, y_pred))
+# 6. Финальная оценка на тесте
+y_test_pred = pipeline.predict(X_test)
+print("\n=== ДАРЬЯ: Logistic Regression (Test) ===")
+print(f"Recall: {recall_score(y_test, y_test_pred):.4f}")
+print(f"Precision: {precision_score(y_test, y_test_pred):.4f}")
+print(f"F1-score: {f1_score(y_test, y_test_pred):.4f}")
+print(classification_report(y_test, y_test_pred))
